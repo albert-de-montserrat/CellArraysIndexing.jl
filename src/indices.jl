@@ -11,7 +11,7 @@ Get the `cellᵢ` index of a specific cell in a `CellArray``.
 # Returns
 - The index of the specified cell.
 """
-Base.@propagate_inbounds @inline function getcellindex(A::CPUCellArray{SVector, nDim, 1, T}, cellᵢ::Int, I::Vararg{Int, nDim}) where {nDim, T}
+Base.@propagate_inbounds @inline function getcellindex(A::CPUCellArray{SVector{N, T}, nDim, 1, T}, cellᵢ::Int, I::Vararg{Int, nDim}) where {nDim, N, T}
     index = Base._to_linear_index(A,I...)
     A.data[1, cellᵢ,index]
 end
@@ -36,7 +36,7 @@ Set the `cellᵢ` index of a specific cell in a `CellArray`` to the value of the
 # Returns
 - The index of the specified cell.
 """
-Base.@propagate_inbounds function setcellindex!(A::CPUCellArray{SVector, nDim, 1, T}, v::T, cellᵢ::Int, I::Vararg{Int, nDim}) where {nDim, T}
+Base.@propagate_inbounds function setcellindex!(A::CPUCellArray{SVector{N, T}, nDim, 1, T}, v::T, cellᵢ::Int, I::Vararg{Int, nDim}) where {nDim, N, T}
     index = Base._to_linear_index(A, I...)
     setindex!(A.data, v, 1, cellᵢ, index)
 end
@@ -48,12 +48,12 @@ Base.@propagate_inbounds function setcellindex!(A::CPUCellArray{SMatrix{Ni, Nj, 
 end
 
 macro index(ex)
-    ex = ex.head === (:(=)) ? _set!(ex) : _get(ex)
+    ex = ex.head === (:(=)) ? _setindex!(ex) : _getindex(ex)
     return :($(esc(ex)))
 end
 
-@inline _get(ex) = Expr(:call, getcellindex, ex.args...)
-@inline function _set!(ex)
+@inline _getindex(ex) = Expr(:call, getcellindex, ex.args...)
+@inline function _setindex!(ex)
     return Expr(
         :call, setcellindex!, ex.args[1].args[1], ex.args[2], ex.args[1].args[2:end]...
     )

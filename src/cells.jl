@@ -53,49 +53,13 @@ end
 end
 
 # Convinience macros
-
-"""
-    @cell(ex)
-
-A macro to replace the default `getindex` and `setindex!` by the optimized `getcell` and `setcell!`
-
-# Example
-```julia-repl
-julia> using Chairmarks
-
-julia> using ParallelStencil
-
-julia> @init_parallel_stencil(Threads, Float64, 2)
-
-julia> A = @rand(ni..., celldims=(2,2));
-
-julia> @b $A[1,1,1]
-4.096 ns
-
-julia> @b @cell $A[1,1,1]
-3.122 ns
-
-julia> A[1,1,1] === @cell A[1,1,1]
-true
-
-julia> c = A[2,2,2]
-2×2 SMatrix{2, 2, Float64, 4} with indices SOneTo(2)×SOneTo(2):
- 0.95696   0.110863
- 0.316941  0.644421
-
-julia> @cell A[1, 1, 1] = c;
-
-julia> A[1, 1, 1] == c
-true
-```
-"""
 macro cell(ex)
-    ex = ex.head === (:(=)) ? _set!(ex) : _get(ex)
+    ex = ex.head === (:(=)) ? _setcell!(ex) : _getcell(ex)
     return :($(esc(ex)))
 end
 
-@inline _get(ex) = Expr(:call, getcell, ex.args...)
-@inline function _set!(ex)
+@inline _getcell(ex) = Expr(:call, getcell, ex.args...)
+@inline function _setcell!(ex)
     return Expr(
         :call, setcell!, ex.args[1].args[1], ex.args[2], ex.args[1].args[2:end]...
     )
