@@ -21,7 +21,7 @@ median 2.384 ns
 mean   2.525 ns
 max    13.580 ns
 
-julia> @be $A[1, 1][2]
+julia> @be $A[1, 1][2] # CellArrays.jl
 Benchmark: 4655 samples with 2718 evaluations
 min    3.418 ns
 median 6.929 ns
