@@ -1,3 +1,5 @@
+[![CPU UnitTests](https://github.com/JuliaGeodynamics/JustPIC.jl/actions/workflows/UnitTests.yml/badge.svg)](https://github.com/JuliaGeodynamics/JustPIC.jl/actions/workflows/UnitTests.yml)
+
 # CellArraysIndexing.jl
 
 This package provides faster read and writes to `CellArray` objects from [CellArrays.jl](https://github.com/omlins/CellArrays.jl) using the macros `@cell` and `@index`.
