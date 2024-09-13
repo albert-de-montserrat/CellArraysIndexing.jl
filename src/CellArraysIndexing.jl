@@ -2,10 +2,15 @@ module CellArraysIndexing
 
 using CellArrays, StaticArrays
 
-include("cells.jl")
-export @cell, getcell, setcell!
+include("cells_CPU.jl")
+include("cells_GPU.jl")
+export getcell, setcell!
 
-include("indices.jl")
-export @index, getcellindex, setcellindex!
+include("indices_CPU.jl")
+include("indices_GPU.jl")
+export getcellindex, setcellindex!
+
+include("macros.jl")
+export @index, @cell
 
 end # module CellArraysIndexing

@@ -46,15 +46,3 @@ Base.@propagate_inbounds function setcellindex!(A::CPUCellArray{SMatrix{Ni, Nj, 
     linear_SMatrix = LinearIndices((1:Nj, 1:Nj))
     setindex!(A.data, v, 1, linear_SMatrix[cellᵢ, cellⱼ], index)
 end
-
-macro index(ex)
-    ex = ex.head === (:(=)) ? _setindex!(ex) : _getindex(ex)
-    return :($(esc(ex)))
-end
-
-@inline _getindex(ex) = Expr(:call, getcellindex, ex.args...)
-@inline function _setindex!(ex)
-    return Expr(
-        :call, setcellindex!, ex.args[1].args[1], ex.args[2], ex.args[1].args[2:end]...
-    )
-end

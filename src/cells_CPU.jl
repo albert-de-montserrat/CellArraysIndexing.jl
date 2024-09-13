@@ -51,16 +51,3 @@ end
                 setindex!(A.data, v[i,j], 1, linear_SMatrix[i, j], index)
     end
 end
-
-# Convinience macros
-macro cell(ex)
-    ex = ex.head === (:(=)) ? _setcell!(ex) : _getcell(ex)
-    return :($(esc(ex)))
-end
-
-@inline _getcell(ex) = Expr(:call, getcell, ex.args...)
-@inline function _setcell!(ex)
-    return Expr(
-        :call, setcell!, ex.args[1].args[1], ex.args[2], ex.args[1].args[2:end]...
-    )
-end
