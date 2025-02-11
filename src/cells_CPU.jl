@@ -17,7 +17,7 @@ end
 
 Base.@propagate_inbounds @inline function getcell(A::CPUCellArray{SMatrix{Ni, Nj, T, N}, nDim, 1, T}, I::Vararg{Int, nDim}) where {N, Ni, Nj, T, nDim}
     index = Base._to_linear_index(A, I...)
-    linear_SMatrix = LinearIndices((1:Nj, 1:Nj))
+    linear_SMatrix = LinearIndices((1:Ni, 1:Nj))
     SMatrix{Ni, Nj, T}(A.data[1, linear_SMatrix[i, j], index] for i in 1:Ni, j in 1:Nj)
 end
 
@@ -45,7 +45,7 @@ end
         Base.@_inline_meta
         Base.@_propagate_inbounds_meta
         index = Base._to_linear_index(A, I...)
-        linear_SMatrix = LinearIndices((1:$Nj, 1:$Nj))
+        linear_SMatrix = LinearIndices((1:$Ni, 1:$Nj))
         Base.@nexprs $Ni i -> 
             Base.@nexprs $Nj j ->
                 setindex!(A.data, v[i,j], 1, linear_SMatrix[i, j], index)
