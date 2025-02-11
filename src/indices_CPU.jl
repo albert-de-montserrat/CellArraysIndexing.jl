@@ -18,7 +18,7 @@ end
 
 Base.@propagate_inbounds @inline function getcellindex(A::CPUCellArray{SMatrix{Ni, Nj, T, N}, nDim, 1, T}, cellᵢ::Int, cellⱼ::Int, I::Vararg{Int, nDim}) where {N, Ni, Nj, T, nDim}
     index = Base._to_linear_index(A, I...)
-    linear_SMatrix = LinearIndices((1:Nj, 1:Nj))
+    linear_SMatrix = LinearIndices((1:Ni, 1:Nj))
     A.data[1, linear_SMatrix[cellᵢ, cellⱼ], index]
 end
 
@@ -43,6 +43,6 @@ end
 
 Base.@propagate_inbounds function setcellindex!(A::CPUCellArray{SMatrix{Ni, Nj, T, N}, nDim, 1, T}, v::T, cellᵢ::Int, cellⱼ::Int, I::Vararg{Int, nDim}) where {N, Ni, Nj, nDim, T}
     index = Base._to_linear_index(A, I...)
-    linear_SMatrix = LinearIndices((1:Nj, 1:Nj))
+    linear_SMatrix = LinearIndices((1:Ni, 1:Nj))
     setindex!(A.data, v, 1, linear_SMatrix[cellᵢ, cellⱼ], index)
 end

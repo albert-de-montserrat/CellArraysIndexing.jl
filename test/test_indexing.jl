@@ -18,6 +18,13 @@
             
             @index A[2, 2, 1, 1] = 5.1
             @test 5.1 == @index A[2, 2, 1, 1] 
+
+            A = @rand(ni..., celldims=(6, 3));
+            setcellindex!(A, 1.2, 2, 2, 1, 1)
+            @test getcellindex(A, 2, 2, 1, 1) == 1.2
+            
+            @index A[2, 2, 1, 1] = 5.1
+            @test 5.1 == @index A[2, 2, 1, 1] 
         end
     end
 
@@ -35,6 +42,13 @@
 
         @testset "SMatrix" begin
             A = @rand(ni..., celldims=(2,2));
+            setcellindex!(A, 1.2, 2, 2, 1, 1, 1)
+            @test getcellindex(A, 2, 2, 1, 1, 1) == 1.2
+            
+            @index A[2, 2, 1, 1, 1] = 5.1
+            @test 5.1 == @index A[2, 2, 1, 1, 1] 
+
+            A = @rand(ni..., celldims=(6,3));
             setcellindex!(A, 1.2, 2, 2, 1, 1, 1)
             @test getcellindex(A, 2, 2, 1, 1, 1) == 1.2
             

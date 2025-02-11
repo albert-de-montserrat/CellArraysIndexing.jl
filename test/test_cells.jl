@@ -12,7 +12,16 @@
         end
 
         @testset "SMatrix" begin
+            # rectangular matrix
             A = @rand(ni..., celldims=(2,2))
+            c = A[2,2]
+            setcell!(A, c, 1, 1)
+
+            @test A[1,1] == A[2,2]
+            @test A[1,1] == getcell(A,2,2)
+
+            # non-rectangular matrix
+            A = @rand(ni..., celldims=(6,3))
             c = A[2,2]
             setcell!(A, c, 1, 1)
 
@@ -35,6 +44,13 @@
 
         @testset "SMatrix" begin
             A = @rand(ni..., celldims=(2,2))
+            c = A[2,2,2]
+            setcell!(A, c, 1, 1, 1)
+
+            @test A[1,1,1] == A[2,2,2]
+            @test A[1,1,1] == getcell(A,2,2,2)
+
+            A = @rand(ni..., celldims=(6,3))
             c = A[2,2,2]
             setcell!(A, c, 1, 1, 1)
 
