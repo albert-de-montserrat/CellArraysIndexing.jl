@@ -20,7 +20,7 @@ jobs:
         os:
           - ubuntu-latest
           - macOS-latest # M-Series Chip
-          - macOS-13 # Intel Chip
+          - macos-15-intel # Intel Chip
           - windows-latest
         arch:
           - x64

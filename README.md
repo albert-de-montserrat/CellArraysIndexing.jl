@@ -1,4 +1,4 @@
-[![CPU UnitTests](https://github.com/JuliaGeodynamics/JustPIC.jl/actions/workflows/UnitTests.yml/badge.svg)](https://github.com/JuliaGeodynamics/JustPIC.jl/actions/workflows/UnitTests.yml)
+[![CI](https://github.com/albert-de-montserrat/CellArraysIndexing.jl/actions/workflows/ci.yml/badge.svg)](https://github.com/albert-de-montserrat/CellArraysIndexing.jl/actions/workflows/ci.yml)
 
 # CellArraysIndexing.jl
 
