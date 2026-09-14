@@ -6,12 +6,17 @@ This package provides faster read and writes to `CellArray` objects from [CellAr
 
 ## Benchmarks
 
-For reproducible comparisons against the original implementation at commit
-`aeebff1`, see [the benchmark suite](benchmark/README.md). It compares the frozen
-baseline, current package, upstream CellArrays, and direct storage access in the
-same process. The small fixed-coordinate measurements below are historical.
+Checked access validates each grid coordinate before flattening &mdash; earlier
+versions could silently return a different, valid cell for an out-of-range
+coordinate instead of throwing. Measured against the previous release (`0.2.0`)
+on the same machine and caller kernels: whole-cell writes and read-modify-write
+updates are roughly 1.7&ndash;2.4x faster on average (both checked and
+`@inbounds`), component reads are at parity, and one narrow case (an
+18-component matrix cell in B=0 layout on a small grid) is slower by design,
+trading a small, isolated amount of speed for correct bounds checking. The
+small fixed-coordinate measurements below are historical.
 
-Checked access validates each grid coordinate before flattening. In hot loops
+In hot loops
 whose grid and component indices are known to be valid, use caller `@inbounds`
 with either the functions or macros. Whole-cell setters accept static arrays,
 ordinary arrays, and views; oversized inputs copy the required leading region,

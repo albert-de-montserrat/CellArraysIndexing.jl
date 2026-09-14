@@ -2,3 +2,4 @@
 /Manifest.toml
 /dev.jl
 /dev_index.jl
+/benchmark/*
