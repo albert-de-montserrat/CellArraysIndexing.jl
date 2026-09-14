@@ -12,14 +12,20 @@ Get the `cellᵢ` index of a specific cell in a `CellArray``.
 - The index of the specified cell.
 """
 Base.@propagate_inbounds @inline function getcellindex(A::CPUCellArray{SVector{N, T}, nDim, 1, T}, cellᵢ::Int, I::Vararg{Int, nDim}) where {nDim, N, T}
-    index = Base._to_linear_index(A,I...)
-    A.data[1, cellᵢ,index]
+    index = _cell_linear_index(A, I...)
+    @boundscheck begin
+        _check_cell_storage(A, index)
+        checkbounds(LinearIndices((1:N,)), cellᵢ)
+    end
+    @inbounds A.data[_cell_offset(A, cellᵢ, index)]
 end
 
 Base.@propagate_inbounds @inline function getcellindex(A::CPUCellArray{SMatrix{Ni, Nj, T, N}, nDim, 1, T}, cellᵢ::Int, cellⱼ::Int, I::Vararg{Int, nDim}) where {N, Ni, Nj, T, nDim}
-    index = Base._to_linear_index(A, I...)
+    index = _cell_linear_index(A, I...)
     linear_SMatrix = LinearIndices((1:Ni, 1:Nj))
-    A.data[1, linear_SMatrix[cellᵢ, cellⱼ], index]
+    component = linear_SMatrix[cellᵢ, cellⱼ]
+    @boundscheck _check_cell_storage(A, index)
+    @inbounds A.data[_cell_offset(A, component, index)]
 end
 
 """
@@ -37,12 +43,18 @@ Set the `cellᵢ` index of a specific cell in a `CellArray`` to the value of the
 - The index of the specified cell.
 """
 Base.@propagate_inbounds function setcellindex!(A::CPUCellArray{SVector{N, T}, nDim, 1, T}, v::T, cellᵢ::Int, I::Vararg{Int, nDim}) where {nDim, N, T}
-    index = Base._to_linear_index(A, I...)
-    setindex!(A.data, v, 1, cellᵢ, index)
+    index = _cell_linear_index(A, I...)
+    @boundscheck begin
+        _check_cell_storage(A, index)
+        checkbounds(LinearIndices((1:N,)), cellᵢ)
+    end
+    @inbounds setindex!(A.data, v, _cell_offset(A, cellᵢ, index))
 end
 
 Base.@propagate_inbounds function setcellindex!(A::CPUCellArray{SMatrix{Ni, Nj, T, N}, nDim, 1, T}, v::T, cellᵢ::Int, cellⱼ::Int, I::Vararg{Int, nDim}) where {N, Ni, Nj, nDim, T}
-    index = Base._to_linear_index(A, I...)
+    index = _cell_linear_index(A, I...)
     linear_SMatrix = LinearIndices((1:Ni, 1:Nj))
-    setindex!(A.data, v, 1, linear_SMatrix[cellᵢ, cellⱼ], index)
+    component = linear_SMatrix[cellᵢ, cellⱼ]
+    @boundscheck _check_cell_storage(A, index)
+    @inbounds setindex!(A.data, v, _cell_offset(A, component, index))
 end

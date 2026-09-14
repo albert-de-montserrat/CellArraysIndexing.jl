@@ -1,13 +1,17 @@
-using CellArraysIndexing, Test
-using ParallelStencil
-@init_parallel_stencil(Threads, Float64, 2)
+using CellArraysIndexing, CellArrays, StaticArrays, Test
 
-push!(LOAD_PATH, "..")
+function testarray(::Type{S}, B, dims) where S
+    A = CPUCellArray{S,B}(undef, dims)
+    for i in eachindex(A.data)
+        A.data[i] = mod(i, 97) / 97
+    end
+    return A
+end
 
 istest(f) = endswith(f, ".jl") && startswith(basename(f), "test_")
 
 function runtests()
-    testdir = pwd()
+    testdir = @__DIR__
     testfiles = sort(
         filter(
             istest,
