@@ -5,6 +5,23 @@
 This package provides faster read and writes to `CellArray` objects from [CellArrays.jl](https://github.com/omlins/CellArrays.jl) using the macros `@cell` and `@index`.
 
 ## Benchmarks
+
+For reproducible comparisons against the original implementation at commit
+`aeebff1`, see [the benchmark suite](benchmark/README.md). It compares the frozen
+baseline, current package, upstream CellArrays, and direct storage access in the
+same process. The small fixed-coordinate measurements below are historical.
+
+Checked access validates each grid coordinate before flattening. In hot loops
+whose grid and component indices are known to be valid, use caller `@inbounds`
+with either the functions or macros. Whole-cell setters accept static arrays,
+ordinary arrays, and views; oversized inputs copy the required leading region,
+and undersized inputs throw before writing. General matrix inputs retain their
+original traversal order, including when they overlap the destination.
+
+For B=1 storage, components of a cell are contiguous. For B=0 storage, successive
+cells of a component are contiguous. Choose traversal and whole-cell versus
+component access to suit the fields your kernel actually uses.
+
 ```julia
 using CellArraysIndexing, ParallelStencil, StaticArrays
 using Chairmarks
