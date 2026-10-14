@@ -10,13 +10,13 @@ Get the cell at the specified indices `I` from the CellArray `A`.
 # Returns
 - The cell at the specified indices `I`.
 """
-Base.@propagate_inbounds @inline function getcell(A::CPUCellArray{SVector{N, T}, nDim, 1, T}, I::Vararg{Int, nDim}) where {N, nDim, T}
+Base.@propagate_inbounds @inline function getcell(A::CellArray{SVector{N, T}, nDim, 1, <:AbstractArray{T}}, I::Vararg{Int, nDim}) where {N, nDim, T}
     index = _cell_linear_index(A, I...)
     @boundscheck _check_cell_storage(A, index)
     SVector{N, T}(ntuple(k -> (@inbounds A.data[_cell_offset(A, k, index)]), Val(N)))
 end
 
-Base.@propagate_inbounds @inline function getcell(A::CPUCellArray{SMatrix{Ni, Nj, T, N}, nDim, 1, T}, I::Vararg{Int, nDim}) where {N, Ni, Nj, T, nDim}
+Base.@propagate_inbounds @inline function getcell(A::CellArray{SMatrix{Ni, Nj, T, N}, nDim, 1, <:AbstractArray{T}}, I::Vararg{Int, nDim}) where {N, Ni, Nj, T, nDim}
     index = _cell_linear_index(A, I...)
     @boundscheck _check_cell_storage(A, index)
     SMatrix{Ni, Nj, T, N}(ntuple(k -> (@inbounds A.data[_cell_offset(A, k, index)]), Val(N)))
@@ -32,7 +32,7 @@ Set the value of a cell in a CPUCellArray to the value of `v::AbstractArray`.
 - `v::AbstractVector`: The value to set the cell to.
 - `I::Vararg{Int, nDim}`: The indices of the cell to set.
 """
-@generated function setcell!(A::CPUCellArray{SVector{N, T}, nDim, 1, T}, v::AbstractVector, I::Vararg{Int, nDim}) where {N, nDim, T}
+@generated function setcell!(A::CellArray{SVector{N, T}, nDim, 1, <:AbstractArray{T}}, v::AbstractVector, I::Vararg{Int, nDim}) where {N, nDim, T}
     quote
         Base.@_inline_meta
         Base.@_propagate_inbounds_meta
@@ -45,7 +45,7 @@ Set the value of a cell in a CPUCellArray to the value of `v::AbstractArray`.
     end
 end
 
-@generated function setcell!(A::CPUCellArray{SMatrix{Ni, Nj, T, N}, nDim, 1, T},  v::AbstractMatrix, I::Vararg{Int, nDim}) where {N, Ni, Nj, T, nDim}
+@generated function setcell!(A::CellArray{SMatrix{Ni, Nj, T, N}, nDim, 1, <:AbstractArray{T}},  v::AbstractMatrix, I::Vararg{Int, nDim}) where {N, Ni, Nj, T, nDim}
     # Only reorder reads for an immutable static RHS of the exact cell shape.
     # General matrices retain their original traversal and aliasing behavior.
     stores = if v <: SMatrix{Ni,Nj}

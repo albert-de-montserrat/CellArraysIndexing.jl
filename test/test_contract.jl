@@ -92,3 +92,16 @@ end
     @test all(iszero, view(storage, 2:2:24, :, :))
     @test_throws BoundsError getcell(A, 5, 1)
 end
+
+@testset "B=1 with non-Array backing storage" for S in (SVector{3,Float64}, SMatrix{2,3,Float64,6})
+    storage = zeros(1, length(S), 24)
+    A = CellArray{S,2,1}(view(storage, :, :, 1:2:24), (4,3))
+    v = S(ntuple(Float64, length(S)))
+    setcell!(A, v, 3, 2)
+    @test getcell(A, 3, 2) == v
+    @test getcellindex(A, size(S)..., 3, 2) == last(v)
+    setcellindex!(A, 9.0, size(S)..., 3, 2)
+    @test A[3, 2][end] == 9.0
+    @test all(iszero, view(storage, :, :, 2:2:24))
+    @test_throws BoundsError getcell(A, 5, 1)
+end
